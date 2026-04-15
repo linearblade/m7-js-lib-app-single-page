@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SPA Demo - Onroad B</title>
+</head>
+<body>
+  <div>
+    some header stuff
+    <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-a.html">Onroad A</a>
+    <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-c.html">Onroad C</a>
+  </div>
+  <div id="ticker">Ready</div>
+  <div id="main">
+    Onroad B content for the SPA demo.
+  </div>
+  <script type="module" src="/example/active-ui-bootstrap.js"></script>
+  <script type="module" src="spa-install.js"></script>
+</body>
+</html>

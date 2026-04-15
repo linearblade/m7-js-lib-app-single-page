@@ -1,0 +1,142 @@
+/*
+ * Copyright (c) 2026 m7.org
+ * License: MTL-10 (see LICENSE.md)
+ *
+ * Minimal styling hooks for ui.navbar default config.
+ */
+
+.navbar,
+.navbar * {
+  box-sizing: border-box;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #d9d9d9;
+  background: #fff;
+  position: relative;
+}
+
+.navbar__cell--title {
+  flex: 1;
+}
+
+.navbar__brand {
+  text-decoration: none;
+  color: #111;
+  font-weight: 700;
+}
+
+.navbar__toggle {
+  border: 1px solid #c7c7c7;
+  background: #fff;
+  padding: 0.35rem 0.6rem;
+  border-radius: 0.35rem;
+  cursor: pointer;
+}
+
+.navbar__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 1rem;
+}
+
+.navbar__links > li {
+  position: relative;
+}
+
+.navbar__links a {
+  text-decoration: none;
+  color: #111;
+}
+
+.navbar__dropdown {
+  position: relative;
+}
+
+.navbar__dropdown--menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 11rem;
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem 0;
+  border: 1px solid #d2d2d2;
+  background: #fff;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  z-index: 20;
+}
+
+.navbar__dropdown--menu > li > a {
+  display: block;
+  padding: 0.4rem 0.7rem;
+}
+
+/* Service-managed state classes */
+.open.navbar__dropdown > .navbar__dropdown--menu,
+.navbar__dropdown.open > .navbar__dropdown--menu {
+  display: block;
+}
+
+.navbar-open {
+  outline: 0;
+}
+
+.navbar__dropdown.navbar__dropdown--flip-left > .navbar__dropdown--menu {
+  left: auto;
+  right: 0;
+}
+
+.navbar__dropdown.navbar__dropdown--center > .navbar__dropdown--menu {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.navbar__dropdown.navbar__dropdown--measuring > .navbar__dropdown--menu {
+  display: block !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Mobile baseline */
+@media (max-width: 800px) {
+  .navbar {
+    flex-wrap: wrap;
+  }
+
+  .navbar__links {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 0.5rem;
+    border-top: 1px solid #ececec;
+    padding-top: 0.5rem;
+  }
+
+  .navbar__links.open {
+    display: flex;
+  }
+
+  .navbar__dropdown--menu {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    min-width: 0;
+    box-shadow: none;
+    border: 0;
+    padding-left: 0.9rem;
+  }
+
+  .navbar__dropdown.navbar__dropdown--center > .navbar__dropdown--menu {
+    transform: none;
+  }
+}

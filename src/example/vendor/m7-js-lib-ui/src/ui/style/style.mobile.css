@@ -1,0 +1,131 @@
+/* =========================================
+   NAVBAR (SERVICE-DRIVEN) - MOBILE
+   ========================================= */
+
+@media (max-width: 800px) {
+  .navbar {
+    flex-wrap: nowrap;
+  }
+
+  .navbar__cell--hamburger,
+  .navbar__cell--logo,
+  .navbar__cell--option,
+  .navbar__cell--login {
+    flex: 0 0 48px;
+  }
+
+  .navbar__cell--title {
+    flex: 1 1 auto;
+    justify-content: center;
+    text-align: center;
+    width: auto;
+  }
+
+  .navbar__cell--nav:not(.no-mobile) {
+    flex: 0 0 0;
+    width: 0;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    position: static;
+  }
+
+  .navbar__links:not(.no-mobile) {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid #ccc;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    padding: 10px 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+
+  .navbar__links:not(.no-mobile).open {
+    overflow-y: auto;
+    max-height: 500px;
+    opacity: 1;
+  }
+
+  .navbar__links li {
+    width: 100%;
+  }
+
+  .navbar__links a {
+    display: block;
+    padding: 12px 24px;
+  }
+
+  .navbar__links.pad-min a {
+    padding: 12px 2px;
+  }
+
+  .navbar__dropdown--menu {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    border: none;
+    background: #fff;
+    box-shadow: none;
+  }
+
+  .navbar__dropdown--menu a {
+    padding-left: 40px;
+  }
+
+  /* Override desktop absolute positioning for top-level dropdowns on mobile. */
+  .navbar__links:not(.no-mobile) > .navbar__dropdown > .navbar__dropdown--menu {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    margin-top: 0;
+  }
+
+  .navbar__dropdown--menu .navbar__dropdown > .navbar__dropdown--menu {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    margin-top: 0;
+    margin-left: var(--nav-menu-mobile-indent);
+  }
+
+  .navbar__dropdown.navbar__dropdown--flip-left > .navbar__dropdown--menu,
+  .navbar__dropdown--menu .navbar__dropdown.navbar__dropdown--flip-left > .navbar__dropdown--menu {
+    left: auto;
+    right: auto;
+  }
+
+  .navbar__dropdown.navbar__dropdown--center > .navbar__dropdown--menu {
+    left: auto;
+    right: auto;
+    transform: none;
+  }
+
+  /* Mobile should use click state only, not :hover persistence (top-level or nested). */
+  .navbar__links:not(.no-mobile) .navbar__dropdown:hover > .navbar__dropdown--menu {
+    display: none;
+  }
+  .navbar__links:not(.no-mobile) .navbar__dropdown.open:hover > .navbar__dropdown--menu,
+  .navbar__links:not(.no-mobile) .navbar__dropdown.open > .navbar__dropdown--menu {
+    display: block;
+  }
+
+  .navbar__dropdown--menu .navbar__dropdown > .navbar__dropdown--submenu-trigger::after,
+  .navbar__dropdown--menu .navbar__dropdown > [data-nav-trigger]::after,
+  .navbar__dropdown--menu .navbar__dropdown > [m7-nav-trigger]::after {
+    content: "▾";
+  }
+
+  .navbar__cell--title {
+    transform: translateX(8px);
+  }
+}
