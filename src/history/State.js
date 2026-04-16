@@ -9,10 +9,6 @@ function normalizeStatePos(value) {
     return Math.max(0, Math.trunc(next));
 }
 
-function normalizeObject(value) {
-    return value && typeof value === "object" && !Array.isArray(value) ? value : {};
-}
-
 class State {
     constructor({lib, history, conf = {}, identifier} = {}) {
         this.lib = lib ?? null;
@@ -26,55 +22,22 @@ class State {
             throw new Error(`${MOD} requires a history helper with set() and push().`);
         }
 
-        this.conf = Object.assign(
+        const confObj = this.lib.hash.to(conf);
+        this.conf = this.lib.hash.merge(
+            confObj,
             {
-                stateKey: "spa",
+                stateKey: confObj.stateKey || "spa", // this is our sandbox
                 last: null,
-            },
-            normalizeObject(conf)
+            }
         );
-
-        if (!this.conf.stateKey) {
-            this.conf.stateKey = "spa";
-        }
 
         this.identifier = identifier || new Date().toString();
     }
 
-    get statePos() {
-        return this.history.statePos;
-    }
-
-    set statePos(value) {
-        this.history.statePos = normalizeStatePos(value);
-    }
-
-    get stateStack() {
-        return this.history.stateStack;
-    }
-
-    get urlHistory() {
-        return this.history.urlHistory;
-    }
-
-    resolveHost() {
-        return this.history && this.history.host ? this.history.host : null;
-    }
-
-    resolveLocation() {
-        const host = this.resolveHost();
-        return host && host.location ? host.location : null;
-    }
-
-    resolveHistory() {
-        const host = this.resolveHost();
-        return host && host.history ? host.history : null;
-    }
-
     buildEnvelope({type = "spa", url = "", previous = null, state = {}, pos = null, history = null} = {}) {
         const nextState = this.lib.hash.to(state);
-        const nextPos = pos === null || pos === undefined ? this.statePos : normalizeStatePos(pos);
-        const nextHistory = Array.isArray(history) ? history.slice() : this.urlHistory.slice();
+        const nextPos = pos === null || pos === undefined ? this.history.statePos : normalizeStatePos(pos);
+        const nextHistory = Array.isArray(history) ? history.slice() : this.history.urlHistory.slice();
 
         return this.lib.hash.merge(
             {
@@ -90,7 +53,8 @@ class State {
     }
 
     buildPageState(nextState) {
-        const historyObj = this.resolveHistory();
+        const host = this.history.host;
+        const historyObj = host && host.history ? host.history : null;
         const pageState = historyObj && typeof historyObj.state === "object"
             ? Object.assign({}, historyObj.state)
             : {};
@@ -100,7 +64,8 @@ class State {
     }
 
     set(state) {
-        const locationObj = this.resolveLocation();
+        const host = this.history.host;
+        const locationObj = host && host.location ? host.location : null;
         if (!locationObj || typeof locationObj.href !== "string") {
             throw new Error(`${MOD} requires a host location with href.`);
         }
@@ -110,7 +75,7 @@ class State {
             url: locationObj.href,
             previous: null,
             state,
-            pos: this.statePos,
+            pos: this.history.statePos,
         });
 
         const pageState = this.buildPageState(nextState);
@@ -123,7 +88,8 @@ class State {
     }
 
     push(url, title = "", state) {
-        const locationObj = this.resolveLocation();
+        const host = this.history.host;
+        const locationObj = host && host.location ? host.location : null;
         if (!locationObj || typeof locationObj.href !== "string") {
             throw new Error(`${MOD} requires a host location with href.`);
         }
@@ -138,8 +104,8 @@ class State {
             url,
             previous: previousURL,
             state,
-            pos: this.statePos + 1,
-            history: this.urlHistory.concat(previousURL),
+            pos: this.history.statePos + 1,
+            history: this.history.urlHistory.concat(previousURL),
         });
 
         this.conf.last = url;

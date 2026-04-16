@@ -11,15 +11,6 @@ function normalizeWorkspace(value) {
     return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
 }
 
-function normalizeStatePos(value) {
-    const next = Number(value);
-    if (!Number.isFinite(next)) {
-        return 0;
-    }
-
-    return Math.max(0, Math.trunc(next));
-}
-
 class RouteState {
 
     constructor({lib, conf = {}, identifier, controller, asserted, env = null} = {}){
@@ -27,22 +18,20 @@ class RouteState {
 	this.controller = controller || null;
 	this.asserted = asserted || (this.controller && this.controller.asserted) || null;
 	this.env = normalizeWorkspace(env);
-	this.conf = Object.assign(
+	const confObj = this.lib.hash.to(conf);
+	this.conf = this.lib.hash.merge(
+	    confObj,
 	    {
-		stateKey: 'spa',
+		stateKey: confObj.stateKey || 'spa', // this is our sandbox
 		last: null,
-	    },
-	    conf && typeof conf === 'object' && !Array.isArray(conf) ? conf : {}
+	    }
 	);
 
-	if (!this.conf.stateKey) {
-	    this.conf.stateKey = 'spa';
-	}
-
 	this.identifier = identifier || new Date().toString();
+	const host = this.controller && this.controller.root ? this.controller.root.host : null;
 	this.history = new History({
 	    lib: this.lib,
-	    host: this.resolveHost(),
+	    host,
 	});
 	this.state = new State({
 	    lib: this.lib,
@@ -55,22 +44,6 @@ class RouteState {
 	this.popStateHost = null;
     }
 
-    get stateStack(){
-	return this.history.stateStack;
-    }
-
-    get urlHistory(){
-	return this.history.urlHistory;
-    }
-
-    get statePos(){
-	return this.history.statePos;
-    }
-
-    set statePos(value){
-	this.history.statePos = normalizeStatePos(value);
-    }
-
     setHost(host){
 	if (this.history && typeof this.history.setHost === 'function') {
 	    this.history.setHost(host);
@@ -78,33 +51,6 @@ class RouteState {
 	    this.history.host = host;
 	}
 	return this.history;
-    }
-
-    resolveControllerRoot(){
-	return this.controller && this.controller.root ? this.controller.root : null;
-    }
-
-    resolveRoot(){
-	return this.resolveControllerRoot();
-    }
-
-    resolveControllerEnv(){
-	return this.resolveControllerRoot();
-    }
-
-    resolveHost(){
-	const root = this.resolveControllerRoot();
-	return root ? root.host : null;
-    }
-
-    resolveLocation(){
-	const host = this.resolveHost();
-	return host ? host.location : null;
-    }
-
-    resolveHistory(){
-	const host = this.resolveHost();
-	return host ? host.history : null;
     }
 
     syncHistoryState(spaState = null){
@@ -135,7 +81,7 @@ class RouteState {
 	return {
 	    lib: this.lib,
 	    spa,
-	    root: this.resolveControllerRoot(),
+	    root: this.controller && this.controller.root ? this.controller.root : null,
 	    env: {
 		global: globalEnv,
 		event: this.env,
@@ -149,7 +95,13 @@ class RouteState {
     }
 
     loadUrl(url = undefined){
-	const locationObj = this.resolveLocation();
+	const host = this.history && this.history.host ? this.history.host : null;
+	const locationObj = host && host.location ? host.location : null;
+
+	if (!host || !locationObj || typeof locationObj.href !== 'string') {
+	    throw new Error(`${MOD} requires a host with location.href.`);
+	}
+
 	if (!url) {
 	    url = locationObj.href;
 	}
@@ -187,7 +139,11 @@ class RouteState {
 
     start(){
 	const lib = this.lib;
-	const host = this.resolveHost();
+	const host = this.popStateHost || this.history.host;
+
+	if (!host || !host.location || !host.history) {
+	    throw new Error(`${MOD} requires a host with location and history.`);
+	}
 
 	if (this.popStateListener && this.popStateHost && typeof this.popStateHost.removeEventListener === 'function') {
 	    this.popStateHost.removeEventListener('popstate', this.popStateListener);
@@ -195,10 +151,11 @@ class RouteState {
 
 	const popStateHandler = (e) => {
 	    let isSPA, backURL, spaState, id;
-	    let currentURL = host.location ? host.location.href : (typeof location !== 'undefined' ? location.href : undefined);
+	    let currentURL = host.location.href;
 	    console.error('state is (e,history)', e.state, host.history ? host.history.state : undefined, currentURL);
+	    console.error('?',e,'?');
 	    if (!e.state) return;
-	    spaState = lib.hash.get(e.state, this.conf['stateKey']);
+	    spaState = lib.hash.get(e.state, this.conf.stateKey);
 	    if(!spaState)
 		return;
 
@@ -215,10 +172,11 @@ class RouteState {
 		return;
 	    }
 
-	    const pageState = this.stateStack[spaState.pos];
+	    const stateStack = this.history.stateStack;
+	    const pageState = stateStack[spaState.pos];
 	    const currentSpaState = pageState ? pageState[this.conf.stateKey] : null;
 	    console.error(spaState, pageState);
-	    if (spaState.pos >= this.stateStack.length ||  !currentSpaState || spaState.url != currentSpaState.url ){
+	    if (spaState.pos >= stateStack.length ||  !currentSpaState || spaState.url != currentSpaState.url ){
 			console.error("STATE MISMATCH");
 			return;
 	    }
@@ -270,7 +228,7 @@ class RouteState {
     }
 
     stop(){
-	const host = this.popStateHost || this.resolveHost();
+	const host = this.popStateHost || this.history.host;
 
 	if (this.popStateListener && host && typeof host.removeEventListener === 'function') {
 	    host.removeEventListener('popstate', this.popStateListener);
