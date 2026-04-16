@@ -1,0 +1,23 @@
+{
+    "id": "ui:console",
+    "title": "Debug Console",
+    "assets": [
+	{ "id": "layout", "type": "html", "url": "layout.html" },
+	{ "id": "style-console",  "type": "css",  "url": "style.css" },
+	{ "id": "style-button",  "type": "css",  "url": "button-square-dark.css" },
+        { "id": "mount",  "type": "mount", "url": "mount.json" },
+	{ "id": "button", "type": "html", "url": "button.html" }
+    ],
+    "modules": [
+	{ "id": "logic", "type": "js", "url": "logic.js" }
+    ],
+    "hooks" : {
+	"packageLoad"  : ["#runners.mountPackage", "~logic.init"],
+	"packageError" : ["#runners.packageError"],
+	"packageUnload" :["~logic.destroy","#runners.unmountPackage"],
+	"loadPrepend"  :  null,
+	"loadAppend"   : null,
+	"errorPrepend" : "~logic.teapot",
+	"errorAppend"  : null
+    }
+}

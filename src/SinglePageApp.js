@@ -104,6 +104,10 @@ class SinglePageApp{
 	    host: envHost,
 	};
 
+	if (this.popstate && typeof this.popstate.setHost === 'function') {
+	    this.popstate.setHost(envHost);
+	}
+
 	if (this.events && typeof this.events.ensureEventDelegator === 'function') {
 	    this.events.ensureEventDelegator({start: false});
 	}

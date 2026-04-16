@@ -2,10 +2,22 @@
   Route state history helper for single page apps.
 */
 
+import History from './history/minimal.js';
+import State from './history/State.js';
+
 const MOD = '[app.SinglePageApp]';
 
 function normalizeWorkspace(value) {
     return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+}
+
+function normalizeStatePos(value) {
+    const next = Number(value);
+    if (!Number.isFinite(next)) {
+        return 0;
+    }
+
+    return Math.max(0, Math.trunc(next));
 }
 
 class RouteState {
@@ -27,13 +39,45 @@ class RouteState {
 	    this.conf.stateKey = 'spa';
 	}
 
-	this.urlHistory = [];
-	this.stateStack = [null];
-	this.statePos = 0;
 	this.identifier = identifier || new Date().toString();
+	this.history = new History({
+	    lib: this.lib,
+	    host: this.resolveHost(),
+	});
+	this.state = new State({
+	    lib: this.lib,
+	    history: this.history,
+	    conf: this.conf,
+	    identifier: this.identifier,
+	});
 	this.popStateHandlers = Object.create(null);
 	this.popStateListener = null;
 	this.popStateHost = null;
+    }
+
+    get stateStack(){
+	return this.history.stateStack;
+    }
+
+    get urlHistory(){
+	return this.history.urlHistory;
+    }
+
+    get statePos(){
+	return this.history.statePos;
+    }
+
+    set statePos(value){
+	this.history.statePos = normalizeStatePos(value);
+    }
+
+    setHost(host){
+	if (this.history && typeof this.history.setHost === 'function') {
+	    this.history.setHost(host);
+	} else if (this.history) {
+	    this.history.host = host;
+	}
+	return this.history;
     }
 
     resolveControllerRoot(){
@@ -61,6 +105,23 @@ class RouteState {
     resolveHistory(){
 	const host = this.resolveHost();
 	return host ? host.history : null;
+    }
+
+    syncHistoryState(spaState = null){
+	if (!spaState || typeof spaState !== 'object') {
+	    return this.history.snapshot();
+	}
+
+	const restore = {
+	    statePos: spaState.pos,
+	};
+
+	if (Array.isArray(spaState.history)) {
+	    restore.urlHistory = spaState.history;
+	}
+
+	// Translate the SPA envelope into the generic history helper state.
+	return this.history.restore(restore);
     }
 
     setEnv(env = null){
@@ -146,18 +207,20 @@ class RouteState {
 	    if(!isSPA)
 		return;
 	    if( id != this.identifier){
-		console.error('expired state.');
-		if (typeof host.removeEventListener === 'function') {
-		    host.removeEventListener('popstate', popStateHandler);
-		}
+			console.error('expired state.');
+			if (typeof host.removeEventListener === 'function') {
+			    host.removeEventListener('popstate', popStateHandler);
+			}
 		this.loadUrl();
 		return;
 	    }
 
-	    console.error(spaState, this.stateStack[spaState.pos]);
-	    if (spaState.pos >= this.stateStack.length ||  spaState.url !=  this.stateStack[spaState.pos].url ){
-		console.error("STATE MISMATCH");
-		return;
+	    const pageState = this.stateStack[spaState.pos];
+	    const currentSpaState = pageState ? pageState[this.conf.stateKey] : null;
+	    console.error(spaState, pageState);
+	    if (spaState.pos >= this.stateStack.length ||  !currentSpaState || spaState.url != currentSpaState.url ){
+			console.error("STATE MISMATCH");
+			return;
 	    }
 
 	    console.error("STATE MATCH");
@@ -167,12 +230,7 @@ class RouteState {
                 return console.error("currentUrl / state url mismatch!'", currentURL, backURL);
 
 	    // keep the internal cursor aligned with the browser's history entry
-	    this.statePos = spaState.pos;
-	    if (Array.isArray(spaState.history)) {
-		this.urlHistory.splice(0, this.urlHistory.length, ...spaState.history.slice());
-	    } else {
-		this.urlHistory.length = spaState.pos;
-	    }
+	    this.syncHistoryState(spaState);
 
 	    if (isSPA == 'start'){
 			console.error('returning to start...');
@@ -224,129 +282,14 @@ class RouteState {
     }
 
     set(state){
-	const lib = this.lib;
-	const locationObj = this.resolveLocation();
-	const historyObj = this.resolveHistory();
-
-	state = lib.hash.to(state);
-	let myState = lib.hash.merge(
-	    {
-		history: this.urlHistory.slice(),
-		type: 'start',
-		url: locationObj.href,
-		previous: null,
-		id: this.identifier,
-		pos: this.statePos,
-	    }, state);
-
-	this.stateStack[this.statePos] = myState;
-	let pageState = historyObj.state || {};
-	pageState[this.conf.stateKey] = myState;
-	console.error(pageState);
-	historyObj.replaceState(
-	    pageState,
-	    null,
-	    locationObj.href
-	);
-
-	return myState;
+	return this.state.set(state);
     }
 
-    push_old(url, title = '', state){
-	const lib = this.lib;
-	const locationObj = this.resolveLocation();
-	const historyObj = this.resolveHistory();
-
-	state = lib.hash.to(state);
-	let previousURL = locationObj.href.toString();
-
-	if(url === undefined)
-	    throw new Error("CANNOT PUSH STATE, URL UNDEFINED: " + url);
-
-	const curPos = lib.hash.get(historyObj, `state.${this.conf.stateKey}.pos`);
-	if (curPos !== undefined && curPos !== null && this.stateStack.length > curPos + 1){
-	    console.error(`history position currently at ${curPos} but stack length is ${this.stateStack.length}`);
-	    let stackSlice = this.stateStack.slice(0, curPos + 1);
-	    this.stateStack.splice(0, this.stateStack.length, ...stackSlice);
-	    this.statePos = curPos;
-	    let urlSlice = this.urlHistory.slice(0, curPos + 1);
-	    this.urlHistory.splice(0, this.urlHistory.length, ...urlSlice);
-	    console.error(`stack length ${this.stateStack.length} , stack pos ${this.statePos}`);
-	}
-
-	this.urlHistory.push(previousURL);
-	this.statePos ++;
-	let myState = lib.hash.merge(
-            {
-                history: this.urlHistory.slice(),
-                type: 'spa',
-                previous: previousURL,
-		id: this.identifier,
-		url: url,
-		pos: this.statePos,
-            }, state);
-
-        if(!title)title ='';
-        this.conf.last = url;
-	this.stateStack.push(myState);
-
-
-	let pageState = {};
-	pageState[this.conf.stateKey] = myState;
-
-        console.error('pushing state..:' , state,myState,pageState);
-	console.error(`stack length ${this.stateStack.length} , stack pos ${this.statePos}`);
-        historyObj.pushState(pageState, title, url);
-	return myState;
-    }
 
     push(url, title = '', state){
-	const lib = this.lib;
-	const locationObj = this.resolveLocation();
-	const historyObj = this.resolveHistory();
-
-	state = lib.hash.to(state);
-	let previousURL = locationObj.href.toString();
-
-	if(url === undefined)
-	    throw new Error("CANNOT PUSH STATE, URL UNDEFINED: " + url);
-
-	const curPos = lib.hash.get(historyObj, `state.${this.conf.stateKey}.pos`);
-	if (curPos !== undefined && curPos !== null && this.stateStack.length > curPos + 1){
-	    console.error(`history position currently at ${curPos} but stack length is ${this.stateStack.length}`);
-	    let stackSlice = this.stateStack.slice(0, curPos + 1);
-	    this.stateStack.splice(0, this.stateStack.length, ...stackSlice);
-	    this.statePos = curPos;
-	    let urlSlice = this.urlHistory.slice(0, curPos + 1);
-	    this.urlHistory.splice(0, this.urlHistory.length, ...urlSlice);
-	    console.error(`stack length ${this.stateStack.length} , stack pos ${this.statePos}`);
-	}
-
-	this.urlHistory.push(previousURL);
-	this.statePos ++;
-	let myState = lib.hash.merge(
-            {
-                history: this.urlHistory.slice(),
-                type: 'spa',
-                previous: previousURL,
-		id: this.identifier,
-		url: url,
-		pos: this.statePos,
-            }, state);
-
-        if(!title)title ='';
-        this.conf.last = url;
-	this.stateStack.push(myState);
-
-	let pageState = historyObj.state && typeof historyObj.state === 'object'
-	    ? Object.assign({}, historyObj.state)
-	    : {};
-	pageState[this.conf.stateKey] = myState;
-
-        console.error('pushing state..:' , state,myState,pageState);
-	console.error(`stack length ${this.stateStack.length} , stack pos ${this.statePos}`);
-        historyObj.pushState(pageState, title, url);
-	return myState;
+	const nextState = this.state.push(url, title, state);
+	this.conf.last = url;
+	return nextState;
     }
 
 }

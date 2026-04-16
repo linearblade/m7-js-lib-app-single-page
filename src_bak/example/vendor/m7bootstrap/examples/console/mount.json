@@ -1,0 +1,37 @@
+{
+    "items": [
+	{
+	    "id": "style-console",
+	    "container": "style",
+	    "selector": "head",
+	    "method": "append"
+	},
+	{
+	    "id": "style-button",
+	    "container": "style",
+	    "selector": "head",
+	    "method": "append"
+	},
+	{
+	    "id": "layout",
+	    "container": "div",
+	    "dissolve":true,
+	    "selector": "body",
+	    "method": "append",
+	    "attrs": {
+		"id": "console-layout"
+	    }
+	},
+	{
+	    "id": "button",
+	    "container": "div",
+	    "dissolve":true,
+	    "selector": "body",
+	    "method": "append",
+	    "attrs": {
+		"id": "console-button"
+	    }
+	}
+
+    ]
+}
