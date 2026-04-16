@@ -1,4 +1,5 @@
 import spaModule, { install } from "../spa-install.js";
+import { install as installPopStateManager } from "../vendor/popStateManager/popStateManager.bundle.v1.0.0.min.js";
 
 function bootSpa() {
     if (typeof window === "undefined") {
@@ -12,6 +13,7 @@ function bootSpa() {
     }
 
     console.log("[example.spa-install] installing spa");
+    ensurePopStateManager(lib);
     const spa = install(lib, { debug: true, statusSelector: "#ticker", trackCurrent: true });
     if (spa && spa.builtins && typeof spa.builtins.setBuiltinEnv === "function") {
         spa.builtins.setBuiltinEnv("spa.nav-click", {
@@ -33,6 +35,7 @@ if (typeof window !== "undefined") {
         window.addEventListener("load", () => {
             if (!window.spa && window.lib) {
                 console.log("[example.spa-install] delayed install");
+                ensurePopStateManager(window.lib);
                 window.spa = install(window.lib, { debug: true, statusSelector: "#ticker", trackCurrent: true });
                 bindNativeSpaFallback(window.spa);
             }
@@ -42,6 +45,16 @@ if (typeof window !== "undefined") {
 
 export { install };
 export default spaModule;
+
+function ensurePopStateManager(lib) {
+    return installPopStateManager(lib, {
+        host: typeof window !== "undefined" && window.location && window.history ? window : null,
+        start: false,
+        conf: {
+            debug: true,
+        },
+    });
+}
 
 function bindNativeSpaFallback(spa) {
     if (typeof window === "undefined" || typeof document === "undefined" || !spa) {

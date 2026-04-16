@@ -37,6 +37,22 @@ function normalizeBool(value) {
     return value === true;
 }
 
+function sanitizePopstateState(state = {}) {
+    const next = state && typeof state === "object" && !Array.isArray(state)
+        ? Object.assign({}, state)
+        : {};
+
+    delete next.history;
+    delete next.type;
+    delete next.url;
+    delete next.previous;
+    delete next.back;
+    delete next.id;
+    delete next.pos;
+
+    return next;
+}
+
 class BuiltIns {
     constructor({controller = null, defs = builtinDefs, env = null} = {}) {
         this.controller = controller || null;
@@ -345,7 +361,7 @@ class BuiltIns {
         }
 
         const title = this.resolveRuntimeTitle(result);
-        const state = result.state && typeof result.state === "object" ? Object.assign({}, result.state) : {};
+        const state = sanitizePopstateState(result.state);
         state.popstate = popstateKey;
 
         if (typeof document !== "undefined" && document && title) {

@@ -1,24 +1,7 @@
-/*
-  Single Page App event handling tools.
-  TODO:
-
-  [ ] clean up functions, remove the debug, use throw => catch where appropriate
-  [ ] simplify the process, and break it out more granularly.
-  [x] add the ablity to set custom methods. (currently the popstate automatically pulls, and the click handler requires you pull yourself)
-
-  maybe something like , set the click handler , which then calls the library.
-
-  so like
-  lib.app.SPA.setCustom(selector,  triggerAction, triggerBack);
-  (when event trigger is called, do something, then run the event trigger?)
-  
-  lib.app.SPA.setWithFetch(selector, clickToUrlEvent, fetch-click, fetch-back);
-  
-*/
 
 import Events from './Events.js';
 import Assert from './Assert.js';
-import RouteState from './RouteState.js';
+import { PopStateManager } from './vendor/popStateManager/popStateManager.bundle.v1.0.0.min.js';
 import { BuiltIns, builtinDefs } from './builtins/index.js';
 
 const MOD = '[app.SinglePageApp]';
@@ -44,6 +27,8 @@ function shouldInstallBuiltins(lib, builtins) {
     return builtins !== false;
 }
 
+const RouteState = PopStateManager;
+
 class SinglePageApp{
 
 
@@ -54,12 +39,15 @@ class SinglePageApp{
 	this.env = {};
 	const rootSpec = isRootSpec(root) ? root : (root == null && isRootSpec(env) ? env : root);
 	const workspace = rootSpec === env ? null : env;
-	this.setRoot(rootSpec);
-	this.setEnv(workspace);
 	this.assert = new Assert({lib, controller: this});
 	this.asserted = this.assert.check();
 	this.events = new Events({lib, controller: this, asserted: this.asserted});
-	this.popstate = new RouteState({lib, controller: this, asserted: this.asserted});
+	this.eventDelegator = this.asserted.eventDelegator;
+	this.popstate = this.asserted.popStateManager;
+	this.popstate.controller = this;
+	this.popstate.asserted = this.asserted;
+	this.setRoot(rootSpec);
+	this.setEnv(workspace);
 	this.builtins = new BuiltIns({controller: this, defs: builtinDefs, env: this.env});
 	this.setBuiltIns(builtins);
 	this.setState(state);
@@ -69,7 +57,7 @@ class SinglePageApp{
 	}
     }
 
-	setRoot(root, host){
+    setRoot(root, host){
 	let envRoot = root;
 	let envHost = host;
 
@@ -104,13 +92,9 @@ class SinglePageApp{
 	    host: envHost,
 	};
 
-	if (this.popstate && typeof this.popstate.setHost === 'function') {
-	    this.popstate.setHost(envHost);
-	}
+	this.popstate.setHost(envHost);
 
-	if (this.events && typeof this.events.ensureEventDelegator === 'function') {
-	    this.events.ensureEventDelegator({start: false});
-	}
+	this.events.ensureEventDelegator({start: false});
 
 	if (this.popstate && this.popstate.popStateListener) {
 	    this.popstate.stop();
@@ -122,6 +106,8 @@ class SinglePageApp{
 
     setEnv(env = null){
 	this.env = normalizeWorkspace(env);
+	this.events.setEnv(this.env);
+	this.popstate.setEnv(this.env);
 	if (this.builtins && typeof this.builtins.setEnv === 'function') {
 	    this.builtins.setEnv(this.env);
 	}
@@ -155,8 +141,8 @@ class SinglePageApp{
 
     registerListeners(listeners = null){
 	const items = Array.isArray(listeners)
-	    ? listeners
-	    : (listeners ? [listeners] : []);
+	      ? listeners
+	      : (listeners ? [listeners] : []);
 
 	for (const spec of items) {
 	    if (!spec) {
@@ -175,13 +161,6 @@ class SinglePageApp{
 	return this;
     }
 
-    resolvePopstateHandler(handler){
-	if (typeof handler === 'string' && this.lib && this.lib.func && typeof this.lib.func.get === 'function') {
-	    handler = this.lib.func.get(handler);
-	}
-
-	return typeof handler === 'function' ? handler : null;
-    }
 
     normalizePopstateEntries(popstates = null){
 	if (!popstates) {
@@ -189,7 +168,7 @@ class SinglePageApp{
 	}
 
 	if (typeof popstates === 'string' || typeof popstates === 'function') {
-	    const handler = this.resolvePopstateHandler(popstates);
+	    const handler = this.lib.func.get(popstates);
 	    if (handler) {
 		return [
 		    {
@@ -208,7 +187,7 @@ class SinglePageApp{
 		    continue;
 		}
 		if (Array.isArray(item) && item.length >= 2) {
-		    const handler = this.resolvePopstateHandler(item[1]);
+		    const handler = this.lib.func.get(item[1]);
 		    if (!handler) {
 			continue;
 		    }
@@ -221,7 +200,7 @@ class SinglePageApp{
 		if (typeof item === 'object') {
 		    const key = item.key ?? item.popstate ?? item.name ?? item.id;
 		    const handler = item.handler ?? item.fn ?? item.action;
-		    const resolvedHandler = this.resolvePopstateHandler(handler);
+		    const resolvedHandler = this.lib.func.get(handler);
 		    if (key != null && resolvedHandler) {
 			items.push({
 			    key: String(key),
@@ -237,7 +216,7 @@ class SinglePageApp{
 	    const items = [];
 	    for (const key of Object.keys(popstates)) {
 		const value = popstates[key];
-		const handler = this.resolvePopstateHandler(value);
+		const handler = this.lib.func.get(value);
 		if (handler) {
 		    items.push({
 			key,
@@ -246,7 +225,7 @@ class SinglePageApp{
 		    continue;
 		}
 		if (value && typeof value === 'object') {
-		    const objectHandler = this.resolvePopstateHandler(value.handler ?? value.fn ?? value.action);
+		    const objectHandler = this.lib.func.get(value.handler ?? value.fn ?? value.action);
 		    const resolvedKey = value.key ?? key;
 		    if (objectHandler) {
 			items.push({
@@ -276,12 +255,13 @@ class SinglePageApp{
 }
 
 SinglePageApp.Assert = Assert;
+SinglePageApp.PopStateManager = PopStateManager;
 SinglePageApp.RouteState = RouteState;
 SinglePageApp.Events = Events;
 
-export { Assert, Events, RouteState, SinglePageApp };
+export { Assert, Events, PopStateManager, RouteState, SinglePageApp };
 export default SinglePageApp;
 
 
 
-    
+

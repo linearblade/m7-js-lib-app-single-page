@@ -1,4 +1,5 @@
 import SinglePageApp from "./SinglePageApp.js";
+import { install as installPopStateManager } from "./vendor/popStateManager/popStateManager.bundle.v1.0.0.min.js";
 
 const MOD = "[app.spa-install]";
 
@@ -18,6 +19,8 @@ function install(lib, opts = {}) {
     if (previousSpa && typeof previousSpa.off === "function") {
         previousSpa.off();
     }
+
+    ensurePopStateManager(lib, options);
 
     log("install start", {
         linkSelector: options.linkSelector,
@@ -136,6 +139,29 @@ function install(lib, opts = {}) {
     lib.spa = spa;
     log("install complete");
     return spa;
+}
+
+function ensurePopStateManager(lib, options = {}) {
+    return installPopStateManager(lib, {
+        host: resolveInstallHost(lib),
+        start: false,
+        conf: {
+            debug: options.debug === true,
+        },
+    });
+}
+
+function resolveInstallHost(lib) {
+    const bootRoot = lib && lib._env ? lib._env.root : null;
+    if (bootRoot && bootRoot.location && bootRoot.history) {
+        return bootRoot;
+    }
+
+    if (typeof window !== "undefined" && window && window.location && window.history) {
+        return window;
+    }
+
+    return null;
 }
 
 function normalizeOptions(opts = {}) {

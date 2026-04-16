@@ -10,6 +10,7 @@ const REQUIRED_DEP_PATHS = Object.freeze([
 ]);
 const REQUIRED_SERVICE_IDS = Object.freeze([
     'primitive.dom.eventdelegator',
+    'app.popstatemanager',
 ]);
 
 class Assert {
@@ -35,14 +36,20 @@ class Assert {
 
 	const services = lib.require.service(REQUIRED_SERVICE_IDS, {mod:MOD, returnMap:true});
 	const eventDelegator = services['primitive.dom.eventdelegator'];
+	const popStateManager = services['app.popstatemanager'];
 
 	if(!eventDelegator){
 	    throw Error(`${MOD} requires primitive.dom.eventdelegator.`);
 	}
 
+	if(!popStateManager){
+	    throw Error(`${MOD} requires app.popstatemanager.`);
+	}
+
 	this.asserted = {
 	    services,
 	    eventDelegator,
+	    popStateManager,
 	};
 
 	if (this.controller) {
