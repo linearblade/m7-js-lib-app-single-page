@@ -1,5 +1,0 @@
-/* Entry point for navbar styles.
-   Keep common rules in base and mode-specific rules in desktop/mobile files. */
-@import "./style.base.css";
-@import "./style.desktop.css";
-@import "./style.mobile.css";
