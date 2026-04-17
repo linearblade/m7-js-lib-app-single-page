@@ -173,9 +173,55 @@ The standalone bundle export surface is expected to expose:
 * `SinglePageApp`
 * `VERSION`
 
+### Standalone helper posture
+
+The release-facing standalone helper surface is the one exported by:
+
+* `src/standalone/install.js`
+* `src/standalone/prebundle.js`
+* the built standalone dist output
+
+The older vendor-composed walkthrough entry at `src/standalone/index.js` is not the primary release contract.
+
 ---
 
 ## Public API surface
+
+## Standalone helper API
+
+### `initLib(opts?)`
+
+Initializes the bundled/shared m7 lib instance used by the standalone build.
+
+### `installServices(opts?)`
+
+Installs the minimum standalone runtime services without installing the SPA instance yet.
+
+Release-facing expectation:
+
+* ensures bundled lib readiness
+* installs event delegator if missing
+* installs popstate manager if missing
+* returns the runtime lib instance
+
+### `install(opts?)`
+
+Standalone generic installer.
+
+Expected behavior:
+
+* ensures standalone services are installed
+* installs the generic SPA service
+
+### `basic(opts?)`
+
+Standalone baseline installer.
+
+Expected behavior:
+
+* ensures standalone services are installed
+* installs the SPA
+* applies baseline click/popstate configuration
 
 ## Construction
 

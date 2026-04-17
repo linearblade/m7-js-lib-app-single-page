@@ -4,18 +4,105 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SPA Demo - Onroad C</title>
+  <link rel="stylesheet" href="/example/demo.css">
 </head>
 <body>
-  <div>
-    some header stuff
-    <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-a.html">Onroad A</a>
-    <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-b.html">Onroad B</a>
+  <div class="demo-shell">
+    <header class="masthead">
+      <div class="eyebrow">m7 single page app demo</div>
+      <div class="masthead-grid">
+        <div class="masthead-copy">
+          <h1>Fast swaps, browser history, and a clearer demo shell.</h1>
+          <p class="lede">
+            This example uses the standalone SPA bundle directly. The header and ticker stay in place,
+            while <code>#main</code> swaps between routes and the browser back button restores previous views.
+          </p>
+        </div>
+        <aside class="masthead-card">
+          <strong>What this run is proving</strong>
+          <p>
+            Click handlers push state, popstate restores content, and the demo UI now makes the route transitions easier to see.
+          </p>
+        </aside>
+      </div>
+      <nav class="nav-cluster" aria-label="Example navigation">
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="index.html">Home</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="page-1.html">Page 1</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="page-2.html">Page 2</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="page-3.html">Page 3</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-a.html">Onroad A</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-b.html">Onroad B</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-c.html">Onroad C</a>
+        <a class="is-offroad" href="offroad-1.html">Offroad Hub</a>
+      </nav>
+    </header>
+
+    <section class="ticker-shell" aria-label="SPA activity ticker">
+      <div class="ticker-label">Activity Feed</div>
+      <div id="ticker" class="ticker-track" aria-live="polite">
+        <span class="ticker-item is-static">Ready for local navigation.</span>
+      </div>
+    </section>
+
+    <main id="main" class="content-frame">
+      <section class="page-scene theme-plum">
+        <div class="page-hero">
+          <div>
+            <div class="route-badge route-badge--onroad">On-road Route</div>
+            <h2>Onroad C: Branch edge route</h2>
+            <p class="lede">
+              This is the far edge of the alternate branch. Like Page 3, it is a strong place to start a back-navigation test because it
+              makes the restore path do real work instead of just pushing forward again.
+            </p>
+          </div>
+          <aside class="quick-stats">
+            <h3>Best move from here</h3>
+            <div class="metric-grid">
+              <div class="metric"><span>Try</span><strong>Back twice</strong></div>
+              <div class="metric"><span>Watch</span><strong>Ticker feed</strong></div>
+              <div class="metric"><span>Confirm</span><strong>Page titles</strong></div>
+              <div class="metric"><span>Result</span><strong>Exact restore</strong></div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="content-grid">
+          <article class="panel">
+            <div class="kicker">Edge branch route</div>
+            <h3>Strong popstate checkpoint</h3>
+            <p>
+              Ending a branch here and then stepping back through the browser helps validate that popstate restoration is driven by the
+              saved route state rather than by assumptions about what came before.
+            </p>
+          </article>
+          <article class="panel panel--tinted">
+            <div class="kicker">Expected behavior</div>
+            <ul class="story-list">
+              <li>Back once should return to Onroad B.</li>
+              <li>Back again should return to Onroad A.</li>
+              <li>The shell, nav, and ticker should stay stable while only the route body changes.</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="card-strip">
+          <article class="mini-card">
+            <strong>Exactness matters</strong>
+            <p>A good popstate restore feels like a precise replay, not a close approximation.</p>
+          </article>
+          <article class="mini-card">
+            <strong>Branch symmetry</strong>
+            <p>The A/B/C family mirrors the numbered pages but with a different route shape.</p>
+          </article>
+          <article class="mini-card">
+            <strong>Easy to debug</strong>
+            <p>When this route restores well, the rest of the branch usually falls into place too.</p>
+          </article>
+        </div>
+      </section>
+    </main>
   </div>
-  <div id="ticker">Ready</div>
-  <div id="main">
-    Onroad C content for the SPA demo.
-  </div>
-  <script type="module" src="/example/activeTags-bootstrap.js"></script>
+  <script type="module" src="/example/standalone-bootstrap.js"></script>
   <script type="module" src="spa-install.js"></script>
 </body>
 </html>

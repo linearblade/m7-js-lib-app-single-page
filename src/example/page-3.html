@@ -4,20 +4,105 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SPA Demo - Page 3</title>
+  <link rel="stylesheet" href="/example/demo.css">
 </head>
 <body>
-  <div>
-    some header stuff
-    <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="index.html">Home</a>
-    <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="page-1.html">Page 1</a>
-    <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="page-2.html">Page 2</a>
-    <a href="offroad-1.html">Offroad 1</a>
+  <div class="demo-shell">
+    <header class="masthead">
+      <div class="eyebrow">m7 single page app demo</div>
+      <div class="masthead-grid">
+        <div class="masthead-copy">
+          <h1>Fast swaps, browser history, and a clearer demo shell.</h1>
+          <p class="lede">
+            This example uses the standalone SPA bundle directly. The header and ticker stay in place,
+            while <code>#main</code> swaps between routes and the browser back button restores previous views.
+          </p>
+        </div>
+        <aside class="masthead-card">
+          <strong>What this run is proving</strong>
+          <p>
+            Click handlers push state, popstate restores content, and the demo UI now makes the route transitions easier to see.
+          </p>
+        </aside>
+      </div>
+      <nav class="nav-cluster" aria-label="Example navigation">
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="index.html">Home</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="page-1.html">Page 1</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="page-2.html">Page 2</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="page-3.html">Page 3</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-a.html">Onroad A</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-b.html">Onroad B</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-c.html">Onroad C</a>
+        <a class="is-offroad" href="offroad-1.html">Offroad Hub</a>
+      </nav>
+    </header>
+
+    <section class="ticker-shell" aria-label="SPA activity ticker">
+      <div class="ticker-label">Activity Feed</div>
+      <div id="ticker" class="ticker-track" aria-live="polite">
+        <span class="ticker-item is-static">Ready for local navigation.</span>
+      </div>
+    </section>
+
+    <main id="main" class="content-frame">
+      <section class="page-scene theme-plum">
+        <div class="page-hero">
+          <div>
+            <div class="route-badge route-badge--onroad">On-road Route</div>
+            <h2>Page 3: Deepest numbered route</h2>
+            <p class="lede">
+              This is the far end of the numbered path. It is the best place to start a backward restore test because it forces the browser
+              to unwind the history stack rather than just moving forward again.
+            </p>
+          </div>
+          <aside class="quick-stats">
+            <h3>Ideal test from here</h3>
+            <div class="metric-grid">
+              <div class="metric"><span>Back chain</span><strong>3 → 2 → 1</strong></div>
+              <div class="metric"><span>Then</span><strong>Home</strong></div>
+              <div class="metric"><span>Trigger</span><strong>Browser back</strong></div>
+              <div class="metric"><span>Check</span><strong>No double push</strong></div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="content-grid">
+          <article class="panel">
+            <div class="kicker">Edge route</div>
+            <h3>Good place to shake things loose</h3>
+            <p>
+              When you begin the back sequence here, the restore path has nowhere further to go forward. That makes it easier to spot
+              accidental push behavior or a handler that replays the wrong URL.
+            </p>
+          </article>
+          <article class="panel panel--tinted">
+            <div class="kicker">What should happen</div>
+            <ul class="story-list">
+              <li>The ticker should note the restore events without clearing earlier messages.</li>
+              <li>The content should step through Page 2 and Page 1 on the way back.</li>
+              <li>The final return to Home should bring the original intro cards back intact.</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="card-strip">
+          <article class="mini-card">
+            <strong>History honesty</strong>
+            <p>Back navigation should feel like the browser is in charge, because at this point it is.</p>
+          </article>
+          <article class="mini-card">
+            <strong>Ticker clarity</strong>
+            <p>The feed above should read like a short route log rather than a single mutable status line.</p>
+          </article>
+          <article class="mini-card">
+            <strong>Stress point</strong>
+            <p>If popstate wiring drifts, this page usually exposes it faster than the earlier numbered routes.</p>
+          </article>
+        </div>
+      </section>
+    </main>
   </div>
-  <div id="ticker">Ready</div>
-  <div id="main">
-    Page 3 content for the SPA demo.
-  </div>
-  <script type="module" src="/example/activeTags-bootstrap.js"></script>
+  <script type="module" src="/example/standalone-bootstrap.js"></script>
   <script type="module" src="spa-install.js"></script>
 </body>
 </html>

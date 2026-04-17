@@ -4,18 +4,105 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SPA Demo - Onroad B</title>
+  <link rel="stylesheet" href="/example/demo.css">
 </head>
 <body>
-  <div>
-    some header stuff
-    <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-a.html">Onroad A</a>
-    <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-c.html">Onroad C</a>
+  <div class="demo-shell">
+    <header class="masthead">
+      <div class="eyebrow">m7 single page app demo</div>
+      <div class="masthead-grid">
+        <div class="masthead-copy">
+          <h1>Fast swaps, browser history, and a clearer demo shell.</h1>
+          <p class="lede">
+            This example uses the standalone SPA bundle directly. The header and ticker stay in place,
+            while <code>#main</code> swaps between routes and the browser back button restores previous views.
+          </p>
+        </div>
+        <aside class="masthead-card">
+          <strong>What this run is proving</strong>
+          <p>
+            Click handlers push state, popstate restores content, and the demo UI now makes the route transitions easier to see.
+          </p>
+        </aside>
+      </div>
+      <nav class="nav-cluster" aria-label="Example navigation">
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="index.html">Home</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="page-1.html">Page 1</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="page-2.html">Page 2</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="page-3.html">Page 3</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-a.html">Onroad A</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-b.html">Onroad B</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-c.html">Onroad C</a>
+        <a class="is-offroad" href="offroad-1.html">Offroad Hub</a>
+      </nav>
+    </header>
+
+    <section class="ticker-shell" aria-label="SPA activity ticker">
+      <div class="ticker-label">Activity Feed</div>
+      <div id="ticker" class="ticker-track" aria-live="polite">
+        <span class="ticker-item is-static">Ready for local navigation.</span>
+      </div>
+    </section>
+
+    <main id="main" class="content-frame">
+      <section class="page-scene theme-sage">
+        <div class="page-hero">
+          <div>
+            <div class="route-badge route-badge--onroad">On-road Route</div>
+            <h2>Onroad B: Middle branch checkpoint</h2>
+            <p class="lede">
+              The middle node in a branch is handy for the same reason Page 2 is handy: it lets us go in either direction and confirm the
+              restores feel precise rather than approximate.
+            </p>
+          </div>
+          <aside class="quick-stats">
+            <h3>Branch test plan</h3>
+            <div class="metric-grid">
+              <div class="metric"><span>Before</span><strong>A</strong></div>
+              <div class="metric"><span>After</span><strong>C</strong></div>
+              <div class="metric"><span>Action</span><strong>Back</strong></div>
+              <div class="metric"><span>Signal</span><strong>Restored copy</strong></div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="content-grid">
+          <article class="panel">
+            <div class="kicker">Midpoint route</div>
+            <h3>Why this page matters</h3>
+            <p>
+              If the history envelope or popstate registration is slightly wrong, midpoint routes often reveal it first. They are the ones
+              most likely to show a mismatch between the URL, the title, and the restored body content.
+            </p>
+          </article>
+          <article class="panel panel--tinted">
+            <div class="kicker">What to notice</div>
+            <ul class="story-list">
+              <li>The ticker should keep earlier route notes visible as newer ones are appended.</li>
+              <li>The masthead should remain stable while only this content area changes.</li>
+              <li>Back should land here exactly, not merely “close enough.”</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="card-strip">
+          <article class="mini-card">
+            <strong>Great for inspection</strong>
+            <p>This page gives you two adjacent restores to compare, which makes small mistakes easier to spot.</p>
+          </article>
+          <article class="mini-card">
+            <strong>Branch confidence</strong>
+            <p>It helps prove the example is not only valid on one simple linear route family.</p>
+          </article>
+          <article class="mini-card">
+            <strong>Clean signals</strong>
+            <p>Different copy, different arrangement, same SPA mechanism underneath.</p>
+          </article>
+        </div>
+      </section>
+    </main>
   </div>
-  <div id="ticker">Ready</div>
-  <div id="main">
-    Onroad B content for the SPA demo.
-  </div>
-  <script type="module" src="/example/activeTags-bootstrap.js"></script>
+  <script type="module" src="/example/standalone-bootstrap.js"></script>
   <script type="module" src="spa-install.js"></script>
 </body>
 </html>

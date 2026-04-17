@@ -107,6 +107,10 @@ Build output is produced by:
 npm run build
 ```
 
+For the release-facing standalone helper surface, see:
+
+* [STANDALONE_HELPERS.md](./STANDALONE_HELPERS.md)
+
 ---
 
 ## 3) Legacy convenience installer
@@ -152,5 +156,6 @@ In that shape, ActiveTags installs popstate first, then applies this project's b
 ## See also
 
 * [Quick Start](./QUICKSTART.md)
+* [Standalone Helpers](./STANDALONE_HELPERS.md)
 * [Click and Popstate Handlers](./POPSTATE_HANDLERS.md)
 * [README](../../README.md)

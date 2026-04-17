@@ -350,9 +350,9 @@ That makes it easy to:
 
 The lower-level popstate manager project is intentionally more advanced-user oriented and more sparse on usage docs. This project is the place where restore behavior becomes concrete.
 
-For lower-level service details, see the future stub:
+For lower-level service details, see the public popstate manager repository:
 
-* [m7-js-lib-app-popstatemanager docs (stub / TODO)](../../../m7-js-lib-app-popstatemanager/README.md)
+* [m7-js-lib-app-popstatemanager](https://github.com/linearblade/m7-js-lib-app-popstatemanager)
 
 If you are deciding how to design a restore flow, start here:
 

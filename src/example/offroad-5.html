@@ -4,16 +4,80 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Offroad 5</title>
+  <link rel="stylesheet" href="/example/demo.css">
 </head>
 <body>
-  <div>
-    offroad header stuff
-    <a href="onroad-a.html">Onroad A</a>
-    <a href="offroad-4.html">Offroad 4</a>
-    <a href="offroad-6.html">Offroad 6</a>
-  </div>
-  <div id="main">
-    Offroad 5 content.
+  <div class="demo-shell">
+    <header class="masthead">
+      <div class="eyebrow">m7 single page app demo</div>
+      <div class="masthead-grid">
+        <div class="masthead-copy">
+          <h1>Offroad routes stay intentionally outside the SPA.</h1>
+          <p class="lede">
+            These pages are here to contrast the SPA experience with ordinary full page navigation. They share the same visual shell,
+            but they do not load the standalone bootstrap.
+          </p>
+        </div>
+        <aside class="masthead-card">
+          <strong>Why keep them around</strong>
+          <p>
+            They make it easier to prove the difference between partial swaps and full reloads without leaving the example set.
+          </p>
+        </aside>
+      </div>
+      <nav class="nav-cluster" aria-label="Example navigation">
+        <a href="index.html">Home</a>
+        <a href="page-1.html">Page 1</a>
+        <a href="page-2.html">Page 2</a>
+        <a href="page-3.html">Page 3</a>
+        <a href="onroad-a.html">Onroad A</a>
+        <a href="onroad-b.html">Onroad B</a>
+        <a href="onroad-c.html">Onroad C</a>
+        <a class="is-offroad" href="offroad-1.html">Offroad Hub</a>
+      </nav>
+    </header>
+
+    <main id="main" class="content-frame">
+      <section class="page-scene">
+        <div class="page-hero">
+          <div>
+            <div class="route-badge route-badge--offroad">Off-road Route</div>
+            <h2>Offroad 5</h2>
+            <p class="lede">
+              This branch remains intentionally ordinary, but the layout still gives it enough structure that full reload navigation does not
+              feel like a throwaway side path in the demo.
+            </p>
+          </div>
+          <aside class="quick-stats">
+            <h3>Route mode</h3>
+            <div class="metric-grid">
+              <div class="metric"><span>Navigation</span><strong>Full reload</strong></div>
+              <div class="metric"><span>History</span><strong>Native only</strong></div>
+              <div class="metric"><span>Purpose</span><strong>Compare feel</strong></div>
+              <div class="metric"><span>Visuals</span><strong>Shared shell</strong></div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="content-grid">
+          <article class="panel">
+            <div class="offroad-note">Plain browser navigation</div>
+            <p>
+              Use this page after a few on-road transitions if you want a quick reset in perspective. It reminds us what a normal load feels
+              like and why the SPA shell staying intact is noticeable.
+            </p>
+          </article>
+          <article class="panel panel--tinted">
+            <div class="kicker">Continue exploring</div>
+            <ul class="story-list">
+              <li><a href="offroad-4.html">Offroad 4</a></li>
+              <li><a href="offroad-6.html">Offroad 6</a></li>
+              <li><a href="onroad-a.html">Back to Onroad A</a></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
   </div>
 </body>
 </html>

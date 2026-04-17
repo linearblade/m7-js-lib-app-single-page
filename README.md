@@ -17,10 +17,11 @@ If you are new to the project, the recommended reading order is:
 1. **Introduction** -> [docs/usage/INTRODUCTION.md](docs/usage/INTRODUCTION.md)
 2. **Installation** -> [docs/usage/INSTALLATION.md](docs/usage/INSTALLATION.md)
 3. **Requirements** -> [docs/usage/REQUIREMENTS.md](docs/usage/REQUIREMENTS.md)
-4. **Quick Start** -> [docs/usage/QUICKSTART.md](docs/usage/QUICKSTART.md)
-5. **Click and Popstate Handlers** -> [docs/usage/POPSTATE_HANDLERS.md](docs/usage/POPSTATE_HANDLERS.md)
-6. **API Contract** -> [docs/api/SINGLE_PAGE_APP_API_CONTRACT.md](docs/api/SINGLE_PAGE_APP_API_CONTRACT.md)
-7. **Usage TOC** -> [docs/usage/TOC.md](docs/usage/TOC.md)
+4. **Standalone Helpers** -> [docs/usage/STANDALONE_HELPERS.md](docs/usage/STANDALONE_HELPERS.md)
+5. **Quick Start** -> [docs/usage/QUICKSTART.md](docs/usage/QUICKSTART.md)
+6. **Click and Popstate Handlers** -> [docs/usage/POPSTATE_HANDLERS.md](docs/usage/POPSTATE_HANDLERS.md)
+7. **API Contract** -> [docs/api/SINGLE_PAGE_APP_API_CONTRACT.md](docs/api/SINGLE_PAGE_APP_API_CONTRACT.md)
+8. **Usage TOC** -> [docs/usage/TOC.md](docs/usage/TOC.md)
 
 ---
 

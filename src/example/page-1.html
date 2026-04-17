@@ -4,20 +4,106 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SPA Demo - Page 1</title>
+  <link rel="stylesheet" href="/example/demo.css">
 </head>
 <body>
-  <div>
-    some header stuff
-    <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="index.html">Home</a>
-    <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="page-2.html">Page 2</a>
-    <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="page-3.html">Page 3</a>
-    <a href="offroad-1.html">Offroad 1</a>
+  <div class="demo-shell">
+    <header class="masthead">
+      <div class="eyebrow">m7 single page app demo</div>
+      <div class="masthead-grid">
+        <div class="masthead-copy">
+          <h1>Fast swaps, browser history, and a clearer demo shell.</h1>
+          <p class="lede">
+            This example uses the standalone SPA bundle directly. The header and ticker stay in place,
+            while <code>#main</code> swaps between routes and the browser back button restores previous views.
+          </p>
+        </div>
+        <aside class="masthead-card">
+          <strong>What this run is proving</strong>
+          <p>
+            Click handlers push state, popstate restores content, and the demo UI now makes the route transitions easier to see.
+          </p>
+        </aside>
+      </div>
+      <nav class="nav-cluster" aria-label="Example navigation">
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="index.html">Home</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="page-1.html">Page 1</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="page-2.html">Page 2</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="page-3.html">Page 3</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-a.html">Onroad A</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-b.html">Onroad B</a>
+        <a spa-type="nav-click" spa-src="#main" spa-dst="#main" href="onroad-c.html">Onroad C</a>
+        <a class="is-offroad" href="offroad-1.html">Offroad Hub</a>
+      </nav>
+    </header>
+
+    <section class="ticker-shell" aria-label="SPA activity ticker">
+      <div class="ticker-label">Activity Feed</div>
+      <div id="ticker" class="ticker-track" aria-live="polite">
+        <span class="ticker-item is-static">Ready for local navigation.</span>
+      </div>
+    </section>
+
+    <main id="main" class="content-frame">
+      <section class="page-scene">
+        <div class="page-hero">
+          <div>
+            <div class="route-badge route-badge--onroad">On-road Route</div>
+            <h2>Page 1: Crisp Content Swap</h2>
+            <p class="lede">
+              This page is intentionally text-heavy enough that a partial swap is obvious. It is a good route for confirming
+              that the old content is fully replaced rather than merged accidentally.
+            </p>
+          </div>
+          <aside class="quick-stats">
+            <h3>What to watch</h3>
+            <div class="metric-grid">
+              <div class="metric"><span>Transition</span><strong>Forward click</strong></div>
+              <div class="metric"><span>Expected</span><strong>PushState</strong></div>
+              <div class="metric"><span>Restore</span><strong>Back button</strong></div>
+              <div class="metric"><span>Signal</span><strong>Ticker append</strong></div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="content-grid">
+          <article class="panel">
+            <div class="kicker">Primary check</div>
+            <h3>Content integrity</h3>
+            <p>
+              Move from this page to Page 2, then hit Back. The wording, panel order, and metrics here should return exactly as they were,
+              which makes it easy to notice stale fragments or a bad restore sequence.
+            </p>
+          </article>
+          <article class="panel panel--tinted">
+            <div class="kicker">Secondary check</div>
+            <h3>History behavior</h3>
+            <ul class="story-list">
+              <li>The URL should update without a full reload.</li>
+              <li>The title should follow the page you moved to.</li>
+              <li>Back should restore this scene without writing a new history entry.</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="card-strip">
+          <article class="mini-card">
+            <strong>Swap target</strong>
+            <p>Only <code>#main</code> changes, which keeps the ticker and navigation chrome stable across routes.</p>
+          </article>
+          <article class="mini-card">
+            <strong>Handler pairing</strong>
+            <p>The click side writes the route meaning, and the popstate side restores it when the browser drives navigation.</p>
+          </article>
+          <article class="mini-card">
+            <strong>Good canary</strong>
+            <p>If something regresses in content replacement, this page’s longer copy usually makes it obvious right away.</p>
+          </article>
+        </div>
+      </section>
+    </main>
   </div>
-  <div id="ticker">Ready</div>
-  <div id="main">
-    Page 1 content for the SPA demo.
-  </div>
-  <script type="module" src="/example/activeTags-bootstrap.js"></script>
+  <script type="module" src="/example/standalone-bootstrap.js"></script>
   <script type="module" src="spa-install.js"></script>
 </body>
 </html>

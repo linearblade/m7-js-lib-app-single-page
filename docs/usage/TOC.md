@@ -19,6 +19,9 @@ If you are new, read top-to-bottom.
 * **Requirements** -> [REQUIREMENTS.md](./REQUIREMENTS.md)
   Runtime dependency roots, required services, browser assumptions, and standalone dependency posture.
 
+* **Standalone Helpers** -> [STANDALONE_HELPERS.md](./STANDALONE_HELPERS.md)
+  Release-facing helper surface for `initLib`, `installServices`, `install`, and `basic`.
+
 * **Quick Start** -> [QUICKSTART.md](./QUICKSTART.md)
   Minimal path from import to a working delegated SPA demo.
 
@@ -40,6 +43,7 @@ If you are new, read top-to-bottom.
 ## See also
 
 * [Quick Start](./QUICKSTART.md)
+* [Standalone Helpers](./STANDALONE_HELPERS.md)
 * [Click and Popstate Handlers](./POPSTATE_HANDLERS.md)
 * [Requirements](./REQUIREMENTS.md)
 * [README](../../README.md)
