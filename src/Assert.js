@@ -3,10 +3,16 @@
 */
 
 const MOD = '[app.SinglePageApp.Assert]';
+// Assert the actual attached library root here, not individual member methods.
+// Example: if `lib.dom.transform` is the installed library, assert
+// `dom.transform`, not just `dom`, and not `dom.transform.someMethod`.
 const REQUIRED_DEP_PATHS = Object.freeze([
+    'array',
     'hash',
     'func',
     'str',
+    'bool',
+    'request',
 ]);
 const REQUIRED_SERVICE_IDS = Object.freeze([
     'primitive.dom.eventdelegator',

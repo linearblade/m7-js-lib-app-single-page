@@ -1,44 +1,46 @@
 
 import Events from './Events.js';
 import Assert from './Assert.js';
-import { PopStateManager } from './vendor/popStateManager/popStateManager.bundle.v1.0.0.min.js';
+import Utils from './utils/Utils.js';
 import { BuiltIns, builtinDefs } from './builtins/index.js';
 
 const MOD = '[app.SinglePageApp]';
 
-function isRootSpec(value) {
-    return !!value
-        && typeof value === 'object'
-        && Object.prototype.hasOwnProperty.call(value, 'root')
-        && Object.prototype.hasOwnProperty.call(value, 'host')
-        && !Object.prototype.hasOwnProperty.call(value, 'global')
-        && !Object.prototype.hasOwnProperty.call(value, 'event');
+function isRootSpec(lib, value) {
+    return lib.hash.hasKeys(value, 'root host',true)
+        && !lib.hash.hasKeys(value, 'global event');
 }
 
-function normalizeWorkspace(value) {
-    return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+function libRoot(lib){
+    const bootRoot = lib.hash.get(lib,'_env.root');
+
+    if( !(bootRoot && bootRoot.document)  )
+	throw new Error("unable to acquire root/host");
+    return {
+	root: bootRoot.document,
+	host:bootRoot
+    } ;
+
 }
 
-function shouldInstallBuiltins(lib, builtins) {
-    if (lib && lib.bool && typeof lib.bool.no === 'function') {
-        return !lib.bool.no(builtins);
-    }
-
-    return builtins !== false;
+function rootSpec(root, host = undefined) {
+    return arguments.length > 1 ? { root, host } : root;
 }
 
-const RouteState = PopStateManager;
+function getRoot(lib, input = null) {
+    return isRootSpec(lib,input) ?
+	input : libRoot(lib);
+}
 
-class SinglePageApp{
 
+export class SinglePageApp{
 
 
     constructor({lib, root, env = null, state, listeners, popstates, builtins = true, autoStart = true} = {}){
 	this.lib = lib;
-	this.root = {};
+	this.root = getRoot(lib, root);
 	this.env = {};
-	const rootSpec = isRootSpec(root) ? root : (root == null && isRootSpec(env) ? env : root);
-	const workspace = rootSpec === env ? null : env;
+	this.utils = new Utils({spa:this, lib});
 	this.assert = new Assert({lib, controller: this});
 	this.asserted = this.assert.check();
 	this.events = new Events({lib, controller: this, asserted: this.asserted});
@@ -46,53 +48,21 @@ class SinglePageApp{
 	this.popstate = this.asserted.popStateManager;
 	this.popstate.controller = this;
 	this.popstate.asserted = this.asserted;
-	this.setRoot(rootSpec);
-	this.setEnv(workspace);
+	this.setRoot(this.root);
 	this.builtins = new BuiltIns({controller: this, defs: builtinDefs, env: this.env});
+	this.setEnv(env);
 	this.setBuiltIns(builtins);
 	this.setState(state);
 	this.configure({listeners, popstates});
-	if (autoStart !== false) {
+	if(!lib.bool.no(autoStart))
 	    this.on();
-	}
+
     }
 
     setRoot(root, host){
-	let envRoot = root;
-	let envHost = host;
+	this.root = getRoot(this.lib, rootSpec(root, host));
 
-	if (arguments.length === 1 && envRoot && typeof envRoot === 'object') {
-	    const hasRoot = Object.prototype.hasOwnProperty.call(envRoot, 'root');
-	    const hasHost = Object.prototype.hasOwnProperty.call(envRoot, 'host');
-	    if (!hasRoot || !hasHost || envRoot.root == null || envRoot.host == null) {
-		throw new Error(`${MOD} root must include both root and host, or be null/undefined.`);
-	    }
-	    envHost = envRoot.host;
-	    envRoot = envRoot.root;
-	}
-
-	if (envRoot == null && envHost == null) {
-	    const bootRoot = this.lib && this.lib._env ? this.lib._env.root : null;
-	    if (envRoot == null && bootRoot && bootRoot.document) {
-		envRoot = bootRoot.document;
-	    }
-	    if (envHost == null && bootRoot) {
-		envHost = bootRoot;
-	    }
-	} else if (envRoot == null || envHost == null) {
-	    throw new Error(`${MOD} root must include both root and host, or be null/undefined.`);
-	}
-
-	if (!envRoot || !envHost) {
-	    throw new Error(`${MOD} requires root.root and root.host.`);
-	}
-
-	this.root = {
-	    root: envRoot,
-	    host: envHost,
-	};
-
-	this.popstate.setHost(envHost);
+	this.popstate.setHost(this.root.host);
 
 	this.events.ensureEventDelegator({start: false});
 
@@ -105,23 +75,26 @@ class SinglePageApp{
     }
 
     setEnv(env = null){
-	this.env = normalizeWorkspace(env);
+	this.env = this.lib.hash.to(env);
 	this.events.setEnv(this.env);
 	this.popstate.setEnv(this.env);
-	if (this.builtins && typeof this.builtins.setEnv === 'function') {
-	    this.builtins.setEnv(this.env);
-	}
+	this.builtins.setEnv(this.env);
 	return this.env;
     }
 
+    setUtils(opts = null){
+	this.utils.configure(Object.assign({
+	    spa: this,
+	    lib: this.lib,
+	}, this.lib.hash.to(opts)));
+	return this.utils;
+    }
+
     setBuiltIns(builtins = true){
-	const useBuiltins = shouldInstallBuiltins(this.lib, builtins);
-
-	if (!this.builtins || typeof this.builtins.setEnabled !== 'function') {
-	    return [];
-	}
-
-	return this.builtins.setEnabled(useBuiltins);
+	const useBuiltins = !this.lib.bool.no(builtins);
+	return !useBuiltins
+	    ? []
+	    : this.builtins.setEnabled(useBuiltins);
     }
 
     configure({listeners, popstates} = {}){
@@ -241,6 +214,22 @@ class SinglePageApp{
 	return [];
     }
 
+    resolveUrl(url, baseUrl){
+	return this.utils.resolveUrl(url, baseUrl);
+    }
+
+    fetchPage(url, requestOptions = {}){
+	return this.utils.fetchPage(url, requestOptions);
+    }
+
+    swapPage(payload, swapOptions = {}){
+	return this.utils.swapPage(payload, swapOptions);
+    }
+
+    loadPage(url, loadOptions = {}){
+	return this.utils.loadPage(url, loadOptions);
+    }
+
     on(){
 	this.events.start();
 	this.popstate.start();
@@ -254,14 +243,4 @@ class SinglePageApp{
     }
 }
 
-SinglePageApp.Assert = Assert;
-SinglePageApp.PopStateManager = PopStateManager;
-SinglePageApp.RouteState = RouteState;
-SinglePageApp.Events = Events;
-
-export { Assert, Events, PopStateManager, RouteState, SinglePageApp };
 export default SinglePageApp;
-
-
-
-

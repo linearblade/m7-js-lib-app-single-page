@@ -1,0 +1,12 @@
+{
+  "name": "m7-js-lib-app-single-page",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "main": "./src/install/index.js",
+  "scripts": {
+    "build:nomap": "bash scripts/build-standalone.sh",
+    "build:map": "bash scripts/build-standalone.sh --with-map",
+    "build": "npm run build:nomap && npm run build:map"
+  }
+}

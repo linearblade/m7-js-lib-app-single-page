@@ -2,9 +2,12 @@ import {
   install as installActiveTags,
   SERVICE_ID,
   VERSION,
-} from "./vendor/activeTags/activeTags.standalone.v1.0.min.js";
+} from "../vendor/activeTags/activeTags.standalone.v1.0.min.js";
 import installUI from "./vendor/m7-js-lib-ui/src/install.js";
 import installTree from "./vendor/m7-js-lib-tree/src/install.js";
+
+const SPA_SERVICE_ID = "app.singlepageapp";
+const EXAMPLE_LINK_SELECTOR = 'a[spa-type="nav-click"][href]';
 
 function normalizePageScript(script) {
   const value = typeof script === "string" ? script.trim() : "";
@@ -40,13 +43,31 @@ async function boot() {
         },
       },
     },
+    spa: {
+      builtins: false,
+      linkSelector: EXAMPLE_LINK_SELECTOR,
+      sourceSelector: "#main",
+      targetSelector: "#main",
+      statusSelector: "#ticker",
+      trackCurrent: true,
+    },
   });
   window.lib = lib;
+  window.installActiveTags = installActiveTags;
 
   const AT = lib.service.get(SERVICE_ID);
   if (!AT) {
     throw new Error(`missing ActiveTags service '${SERVICE_ID}'.`);
   }
+
+  const spa = lib.service.get(SPA_SERVICE_ID) || lib.spa || null;
+  if (!spa) {
+    throw new Error(`missing SPA service '${SPA_SERVICE_ID}' after installActiveTags.`);
+  }
+
+  window.spa = spa;
+  window.spaLib = lib;
+  window.SPA_SERVICE_ID = SPA_SERVICE_ID;
 
   await AT.start();
   installTree(lib);
