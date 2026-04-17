@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 m7.org
+ * License: MTL-10 (see LICENSE.md)
+ */
+
 import { lib as bundledLib, init as initLib } from "../vendor/lib/m7.bundle.v1.0.0.min.js";
 import { install as installEventDelegator } from "../vendor/eventDelegator/eventDelegator.bundle.v1.0.0.min.js";
 import { install as installPopStateManager } from "../vendor/popStateManager/popStateManager.bundle.v1.0.0.min.js";

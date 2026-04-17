@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 m7.org
+ * License: MTL-10 (see LICENSE.md)
+ */
+
 const MOD = "[example.spa-install]";
 const SPA_SERVICE_ID = "app.singlepageapp";
 

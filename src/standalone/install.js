@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 m7.org
+ * License: MTL-10 (see LICENSE.md)
+ */
+
 import { lib as sharedLib, init as initLib } from "../../../m7-js-lib/src/index.js";
 import installEventDelegator from "../../../m7-js-lib-primitive-dom-eventdelegator/src/install.js";
 import installPopStateManager from "../../../m7-js-lib-app-popstatemanager/src/install.js";

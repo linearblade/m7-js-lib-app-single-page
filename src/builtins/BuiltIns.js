@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 m7.org
+ * License: MTL-10 (see LICENSE.md)
+ */
+
 import builtinDefs, { defineBuiltin } from "./defs/index.js";
 
 const MOD = "[app.SinglePageApp.builtins.BuiltIns]";

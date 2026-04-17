@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 m7.org
+ * License: MTL-10 (see LICENSE.md)
+ */
+
 import { lib, initLib, installServices, install, basic } from "./install.js";
 import SinglePageApp from "../SinglePageApp.js";
 import VERSION from "../version.js";

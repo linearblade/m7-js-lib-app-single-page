@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 m7.org
+ * License: MTL-10 (see LICENSE.md)
+ */
+
 import SinglePageApp from "./SinglePageApp.js";
 import createClickHandler from "./handler/click.js";
 import createPopStateHandler from "./handler/popstate.js";
