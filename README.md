@@ -6,6 +6,8 @@
 
 m7-js-lib-app-single-page adds service-oriented SPA navigation on top of m7 lib. It is designed for sites that want partial page loading, delegated click handling, and browser back/forward support without moving to a framework-owned router. The project stays deliberately split: `install()` gives you a generic SPA service object, `basic()` wires a baseline usable product, and popstate restoration remains application-owned so you can decide how each history key should restore UI state.
 
+ActiveTags is not required to use this project. It is currently used in one test/demo path for convenience, but the SPA is designed to run independently through its own install/basic and standalone bundle surfaces.
+
 ---
 
 ## Navigation
@@ -14,9 +16,11 @@ If you are new to the project, the recommended reading order is:
 
 1. **Introduction** -> [docs/usage/INTRODUCTION.md](docs/usage/INTRODUCTION.md)
 2. **Installation** -> [docs/usage/INSTALLATION.md](docs/usage/INSTALLATION.md)
-3. **Quick Start** -> [docs/usage/QUICKSTART.md](docs/usage/QUICKSTART.md)
-4. **Click and Popstate Handlers** -> [docs/usage/POPSTATE_HANDLERS.md](docs/usage/POPSTATE_HANDLERS.md)
-5. **Usage TOC** -> [docs/usage/TOC.md](docs/usage/TOC.md)
+3. **Requirements** -> [docs/usage/REQUIREMENTS.md](docs/usage/REQUIREMENTS.md)
+4. **Quick Start** -> [docs/usage/QUICKSTART.md](docs/usage/QUICKSTART.md)
+5. **Click and Popstate Handlers** -> [docs/usage/POPSTATE_HANDLERS.md](docs/usage/POPSTATE_HANDLERS.md)
+6. **API Contract** -> [docs/api/SINGLE_PAGE_APP_API_CONTRACT.md](docs/api/SINGLE_PAGE_APP_API_CONTRACT.md)
+7. **Usage TOC** -> [docs/usage/TOC.md](docs/usage/TOC.md)
 
 ---
 

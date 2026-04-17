@@ -16,6 +16,9 @@ If you are new, read top-to-bottom.
 * **Installation** -> [INSTALLATION.md](./INSTALLATION.md)
   Source install, standalone bundle usage, service dependencies, and legacy convenience entrypoint posture.
 
+* **Requirements** -> [REQUIREMENTS.md](./REQUIREMENTS.md)
+  Runtime dependency roots, required services, browser assumptions, and standalone dependency posture.
+
 * **Quick Start** -> [QUICKSTART.md](./QUICKSTART.md)
   Minimal path from import to a working delegated SPA demo.
 
@@ -30,6 +33,7 @@ If you are new, read top-to-bottom.
 * **Use Policy** -> [../USE_POLICY.md](../USE_POLICY.md)
 * **AI Disclosure** -> [../AI_DISCLOSURE.md](../AI_DISCLOSURE.md)
 * **Examples/** -> [../../src/example](../../src/example)
+* **API Index** -> [../api/INDEX.md](../api/INDEX.md)
 
 ---
 
@@ -37,4 +41,5 @@ If you are new, read top-to-bottom.
 
 * [Quick Start](./QUICKSTART.md)
 * [Click and Popstate Handlers](./POPSTATE_HANDLERS.md)
+* [Requirements](./REQUIREMENTS.md)
 * [README](../../README.md)
